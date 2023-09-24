@@ -5,15 +5,16 @@ const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
 const app = express();
 const socket = require("socket.io");
+require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
 
-const dbURI = "mongodb+srv://bilal:12345db@node-tuts.eg4cr8c.mongodb.net/chat-app-db";
-const PORT = 4000;
+const dbURL = process.env.MONGODB_URL;
+const PORT = process.env.PORT || 4000;
 
 mongoose
-  .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true})
+  .connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true})
   .then((res) => {
     console.log("DB Connetion Successfull");
     
@@ -22,7 +23,7 @@ mongoose
     );
     const io = socket(server, {
       cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.FRONTEND_URL,
         credentials: true,
       },
     });
@@ -45,7 +46,7 @@ mongoose
 
   })
   .catch((err) => {
-    console.log('url : ', dbURI);
+    console.log('url : ', dbURL);
     console.log(err.message);
     console.log(err);
   });
